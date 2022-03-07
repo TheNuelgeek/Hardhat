@@ -1,24 +1,47 @@
-import { Signer } from "ethers";
-import { ethers } from "hardhat";
+import { BigNumber, BigNumberish, BytesLike, Signer } from "ethers";
+import { ethers, network } from "hardhat";
+import { hrtime } from "process";
 
 async function mainnetFork() {
     // Mainnet forking
-    const addrr = "0x75c0c372da875a4fc78e8a37f58618a6d18904e8"
-    const IERC20 = await ethers.getContractAt ("IERC20", "0x07865c6E87B9F70255377e024ace6630C1Eaa37F")
-    const balance =await (await IERC20).balanceOf(addrr)
+    
+    const addrr = "0x2a63a682b34c92ea39083402acdfb4f77c2950b3"
+    const IERC20 = await ethers.getContractAt ("IERC20", "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39")
+    // const balance =await (await IERC20).balanceOf(addrr)
 
-    console.log(balance)
+    //console.log(`balance before ${balance}`)
 
     // Account Impersonation()
     //@ts-ignore
-    await hre.network.provider.request({
-        method: "hardhat_impersonateAccount",
-        params: [addrr],
-    });
+    // await hre.network.provider.request({
+    //     method: "hardhat_impersonateAccount",
+    //     params: [addrr],
+    // });
 
-    const signer: Signer = await ethers.getSigner(addrr)
-    const status = await IERC20.connect(signer).transfer("0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f", "10")
-    console.log(status)
+    // const signer: Signer = await ethers.getSigner(addrr)
+    // const status = await IERC20.connect(signer).transfer("0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199", "10")
+    //console.log(status)
+
+    // setstorageAt
+
+    const x:BytesLike = new ethers.utils.AbiCoder().encode(["address","uint256"],[addrr, 0])
+    const hashedVal:BytesLike = ethers.utils.solidityKeccak256(["bytes"], [x])
+    const dec: BigNumber = BigNumber.from(hashedVal)
+    // console.log(hashedVal)
+    
+    const Position = await ethers.provider.getStorageAt(IERC20.address,dec)
+    console.log(Position)
+    const balance =await (await IERC20).balanceOf(addrr)
+    console.log(balance)
+
+    await network.provider.send("hardhat_setStorageAt", [
+        IERC20.address,
+        hashedVal,
+        "0x0000000000000000000000000000000000000000000000000000000eddaf4240",
+    ]);
+    const balance2 =await (await IERC20).balanceOf(addrr)
+    console.log(balance2)
+
 }
 
 // We recommend this pattern to be able to use async/await everywhere
