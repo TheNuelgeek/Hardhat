@@ -4,7 +4,7 @@ import { hrtime } from "process";
 
 async function mainnetFork() {
     // Mainnet forking
-    
+
     const addrr = "0x2a63a682b34c92ea39083402acdfb4f77c2950b3"
     const IERC20 = await ethers.getContractAt ("IERC20", "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39")
     // const balance =await (await IERC20).balanceOf(addrr)
@@ -27,9 +27,9 @@ async function mainnetFork() {
     const x:BytesLike = new ethers.utils.AbiCoder().encode(["address","uint256"],[addrr, 0])
     const hashedVal:BytesLike = ethers.utils.solidityKeccak256(["bytes"], [x])
     const dec: BigNumber = BigNumber.from(hashedVal)
-    // console.log(hashedVal)
+    console.log(hashedVal)
     
-    const Position = await ethers.provider.getStorageAt(IERC20.address,dec)
+    const Position = await ethers.provider.getStorageAt(IERC20.address,3)
     console.log(Position)
     const balance =await (await IERC20).balanceOf(addrr)
     console.log(balance)
