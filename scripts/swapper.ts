@@ -32,9 +32,10 @@ async function swap(){
         params: [usdtHolder],
     });
 
+    console.log(`Approving ${IRouterAddr} to spend: ${amount}`)
     await usdtContract.approve(IRouterAddr,amount)
 
-    await router.swapExactTokensForTokens(amount,0,[usdt,warpEth, uni], usdtHolder, 1646749519)
+    await router.swapExactTokensForTokens(amount,0,[usdt,warpEth, uni], usdtHolder, 1646835919)
 
     console.log(`Usdt holder's New balance: ${await uniswapContract.balanceOf(usdtHolder)}`)
 
